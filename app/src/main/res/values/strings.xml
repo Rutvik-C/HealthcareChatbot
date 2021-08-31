@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HealthcareChatbot</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="e_mail">E-Mail</string>
+    <string name="register">Register</string>
+    <string name="already_a_user">Already a user?</string>
+    <string name="login_here">Login Here</string>
+    <string name="login">Login</string>
+    <string name="no_account">Don\'t have an account yet?</string>
+    <string name="register_here">Register Here</string>
+    <string name="type_message">Type a message</string>
+    <string name="pick_symptoms">pick symptoms</string>
+</resources>
