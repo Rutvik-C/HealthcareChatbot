@@ -164,15 +164,14 @@ def reply():
             if len(symptoms) == 0:
                 data = {
                     "message": "Umm... None of the symptoms matched with the symptoms you've given.\nTry in a different way",
-                    "type": "simple", "list": None}
+                    "type": "simple", "list": None, "list_content": None}
 
             else:
                 user_intent["previous"].append("__symptoms__")
-                data = {"message": "Select from the below symptoms", "type": "list", "list": symptoms}
+                data = {"message": "Select from the below symptoms", "type": "list", "list": symptoms, "list_content": "symptoms"}
 
         # Fetching list of symptoms
-        elif list_type == "symptom_list" and len(user_intent["previous"]) != 0 and user_intent["previous"][
-            -1] == "__symptoms__":
+        elif list_type == "symptom_list" and len(user_intent["previous"]) != 0 and user_intent["previous"][-1] == "__symptoms__":
             print(f"==Get co occurring=={user_intent['previous']}")
 
             user_intent["symptoms"] = list_data
@@ -180,13 +179,10 @@ def reply():
             co_occurring = get_co_occurring_symptoms(list_data)
 
             user_intent["previous"].append("__co_occur__")
-            data = {"message": "Okay\nDo you have any of below symptom as well?", "type": "list", "list": co_occurring}
+            data = {"message": "Okay__n__Do you have any of below symptom as well?", "type": "list", "list": co_occurring, "list_content": "additional"}
 
         # Check if user selects any co occurring
         elif list_type == "add_symptom_list" and len(user_intent["previous"]) != 0 and user_intent["previous"][-1] == "__co_occur__":
-            # user_intent["symptoms"].extend(list_data)
-            # check if list is empty and act accordingly
-
             user_intent["symptoms"].extend(list_data)
 
             # Predict
@@ -200,11 +196,15 @@ def reply():
                 elif i != len(user_intent["symptoms"]) - 1:
                     syms += ", "
 
+            user_intent["previous"].append("__pred__")
+
+            user_intent["disease"] = disease
+
             message = responses["disease_predicted"][random.randint(0, len(responses["disease_predicted"]) - 1)]
             message = message.replace("__p__", disease)
-            message += ". Based on your symptoms " + syms
+            message += "__n__Based on your symptoms " + syms
 
-            data = {"message": message, "type": "simple", "list": None}
+            data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
         # Predict intent
         else:
@@ -218,8 +218,7 @@ def reply():
 
             if res[0][idx] < 0.8:  # Not sure
                 message = responses["below_threshold"][random.randint(0, len(responses["below_threshold"]) - 1)]
-                print(f"Low conf {message}")
-                data = {"message": message, "type": "simple", "list": None}
+                data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
             else:
                 if idx == 0:  # affirmative
@@ -231,7 +230,7 @@ def reply():
                     message = message.replace("__u__", user.split("@")[0])
 
                     print(f"greeting {message}")
-                    data = {"message": message, "type": "simple", "list": None}
+                    data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
                 elif idx == 2:  # information
                     pass
@@ -245,9 +244,9 @@ def reply():
                 elif idx == 5:  # query
                     user_intent["previous"].append("__query__")
                     message = responses["tell_symptoms"][random.randint(0, len(responses["tell_symptoms"]) - 1)]
-                    message += "\nType the symptoms comma separated..."
+                    message += "__n__Type the symptoms comma separated..."
 
-                    data = {"message": message, "type": "simple", "list": None}
+                    data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
         resp = jsonify(data)
         resp.status_code = 201

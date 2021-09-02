@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckedTextView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,22 +18,19 @@ import com.example.healthcarechatbot.R;
 import com.example.healthcarechatbot.classes.Message;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ChatAdapter extends ArrayAdapter<String> {
 
     Context context;
     ArrayList<String> arrayList;
     ArrayList<Message> messageArrayList;
-    ListView symptomsList;
 
-    public ChatAdapter(@NonNull Context context, ArrayList<String> arrayList, ArrayList<Message> messageArrayList, ListView symptomsList) {
+    public ChatAdapter(@NonNull Context context, ArrayList<String> arrayList, ArrayList<Message> messageArrayList) {
         super(context, R.layout.lv_chat_left, arrayList);
 
         this.context = context;
         this.arrayList = arrayList;
         this.messageArrayList = messageArrayList;
-        this.symptomsList = symptomsList;
 
     }
 
@@ -47,19 +44,40 @@ public class ChatAdapter extends ArrayAdapter<String> {
         if (messageArrayList.get(position).getArrayListSuggestions() != null) {
             view = layoutInflater.inflate(R.layout.lv_chat_list, null, true);
 
-            // TODO: populate list here
-            ArrayList<String> symptoms = messageArrayList.get(position).getArrayListSuggestions();
-            symptomsList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-            symptomsList.setItemsCanFocus(false);
+            ArrayList<String> suggestions = messageArrayList.get(position).getArrayListSuggestions();
+            SuggestionsAdapter adapter = new SuggestionsAdapter(context, suggestions);
 
-            symptomsList.setOnItemClickListener((parent1, view1, position1, id) -> {
-                CheckedTextView foo = (CheckedTextView) view;
-                if(foo.isChecked()) {
-                    ChatActivity.symptomsSuggestions.add(symptoms.get(position1));
+            ListView listView = view.findViewById(R.id.symptomsListView);
+            listView.setAdapter(adapter);
+
+            RelativeLayout relativeLayout = view.findViewById(R.id.parentRelativeLayout);
+            RelativeLayout.LayoutParams layoutDescription = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, suggestions.size() * 165);
+            relativeLayout.setLayoutParams(layoutDescription);
+
+            listView.setOnItemClickListener((parent1, view1, i, id) -> {
+
+                if (ChatActivity.symptomsSelected.contains(suggestions.get(i))) {
+                    ChatActivity.symptomsSelected.remove(suggestions.get(i));
+
+                } else {
+                    ChatActivity.symptomsSelected.add(suggestions.get(i));
+
                 }
-                else {
-                    ChatActivity.symptomsSuggestions.remove(symptoms.get(position));
+
+                StringBuilder s = new StringBuilder();
+                s.append("Symptoms: ");
+
+                for (int j = 0; j < ChatActivity.symptomsSelected.size(); j++) {
+                    s.append(ChatActivity.symptomsSelected.get(j));
+
+                    if (j == ChatActivity.symptomsSelected.size() - 2) {
+                        s.append(", and ");
+                    } else if (j != ChatActivity.symptomsSelected.size() - 1) {
+                        s.append(", ");
+                    }
                 }
+                ChatActivity.textViewMessage.setText(s.toString());
+
             });
 
         } else if (messageArrayList.get(position).getLeft()) {
