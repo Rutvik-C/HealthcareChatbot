@@ -44,7 +44,6 @@ public class ChatActivity extends AppCompatActivity {
 
     private FirebaseUser mUser;
 
-
     private void displaySimpleMessage(String message) {
         messageArrayList.add(new Message(message, true, false, null));
         arrayList.add(message);

@@ -1,7 +1,7 @@
 {
     "below_threshold": ["Well, I didn't understand that...", "Ah sorry, I didn't get that", "I'm having difficulty understanding that", "I didn't get it", "Sorry but I didn't understand that", "Ouch, I think I missed it.", "Can you please repeat that in a slightly different way?", "Woah! That was too quick, please go slow", "I guess I got zoned out"],
     "greeting": ["Hello, how do you feel __u__", "Hi __u__, How is it going?", "Hey __u__, How are you doing?", "How do you do __u__?", "Hi __u__, nice to meet you", "It is a pleasure to talk with you __u__"],
-    "tell_symptoms": ["How do you feel exactly", "Tell me your symptoms", "Are there any visible symptoms", "What symptoms have you recorded?"],
+    "tell_symptoms": ["How do you feel exactly?", "Tell me your symptoms.", "Are there any visible symptoms?", "What symptoms have you recorded?"],
     "similar_symptoms": ["Do you have any of these symptoms?", "Well I think you might have some of these symptoms as well", "Did you record any of these symptoms"],
     "disease_predicted": ["I think you have __p__ disease", "As per my knowledge you might have __p__", "After analyzing your symptoms I think you might have __p__"],
     "low_confidence": ["I wasn’t able to make a concrete conclusion. It would be wise to visit a nearby doctor for the same", "I don’t think I can analyze your illness. Do check out a nearby doctor as soon as possible"],

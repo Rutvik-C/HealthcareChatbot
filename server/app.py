@@ -60,8 +60,8 @@ def synonyms(term):
         for x in row:
             list_synonyms.append(x.get_text())
 
-    except Exception as e:
-        print(f"Exception occurred: {e}")
+    except:
+        pass
     for syn in wordnet.synsets(term):
         list_synonyms += syn.lemma_names()
 
@@ -135,10 +135,10 @@ def predict_disease(symptoms):
     sample_x = [0 for x in range(0, len(dataset_symptoms))]
 
     for val in symptoms:
-        print(val)
         sample_x[dataset_symptoms.index(val)] = 1
 
-    linear_reg.predict()
+    pred = linear_reg.predict([sample_x])
+    return pred[0].title()
 
 
 @app.route("/chat", methods=['POST'])
@@ -162,14 +162,17 @@ def reply():
             symptoms = preprocess_symptom_text(text)
 
             if len(symptoms) == 0:
-                data = {"message": "Umm... None of the symptoms matched with the symptoms you've given.\nTry in a different way", "type": "simple", "list": None}
+                data = {
+                    "message": "Umm... None of the symptoms matched with the symptoms you've given.\nTry in a different way",
+                    "type": "simple", "list": None}
 
             else:
                 user_intent["previous"].append("__symptoms__")
                 data = {"message": "Select from the below symptoms", "type": "list", "list": symptoms}
 
         # Fetching list of symptoms
-        elif list_type == "symptom_list" and len(user_intent["previous"]) != 0 and user_intent["previous"][-1] == "__symptoms__":
+        elif list_type == "symptom_list" and len(user_intent["previous"]) != 0 and user_intent["previous"][
+            -1] == "__symptoms__":
             print(f"==Get co occurring=={user_intent['previous']}")
 
             user_intent["symptoms"] = list_data
@@ -187,8 +190,21 @@ def reply():
             user_intent["symptoms"].extend(list_data)
 
             # Predict
+            disease = predict_disease(user_intent["symptoms"])
 
-            pass
+            syms = ""
+            for i, string in enumerate(user_intent["symptoms"]):
+                syms += string
+                if i == len(user_intent["symptoms"]) - 2:
+                    syms += ", and "
+                elif i != len(user_intent["symptoms"]) - 1:
+                    syms += ", "
+
+            message = responses["disease_predicted"][random.randint(0, len(responses["disease_predicted"]) - 1)]
+            message = message.replace("__p__", disease)
+            message += ". Based on your symptoms " + syms
+
+            data = {"message": message, "type": "simple", "list": None}
 
         # Predict intent
         else:
@@ -229,8 +245,9 @@ def reply():
                 elif idx == 5:  # query
                     user_intent["previous"].append("__query__")
                     message = responses["tell_symptoms"][random.randint(0, len(responses["tell_symptoms"]) - 1)]
+                    message += "\nType the symptoms comma separated..."
 
-                    data = {"message": message, "type": "pick_symptom", "list": None}
+                    data = {"message": message, "type": "simple", "list": None}
 
         resp = jsonify(data)
         resp.status_code = 201

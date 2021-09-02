@@ -58,9 +58,7 @@ public class ChatAdapter extends ArrayAdapter<String> {
                     ChatActivity.symptomsSuggestions.add(symptoms.get(position1));
                 }
                 else {
-                    if(ChatActivity.symptomsSuggestions.contains(symptoms.get(position))) {
-                      ChatActivity.symptomsSuggestions.remove(symptoms.get(position));
-                    }
+                    ChatActivity.symptomsSuggestions.remove(symptoms.get(position));
                 }
             });
 
