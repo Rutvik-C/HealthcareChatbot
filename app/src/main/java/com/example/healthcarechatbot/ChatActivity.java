@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,8 +31,14 @@ public class ChatActivity extends AppCompatActivity {
     private ChatAdapter chatAdapter;
     private TextView textViewMessage;
 
+    private ListView symptomsListView;
+
     private ArrayList<String> arrayList;
     private ArrayList<Message> messageArrayList;
+
+    public static ArrayList<String> symptomsSuggestions = new ArrayList<>();
+
+    private ListView symptomsList;
 
     private Retrofit retrofit;
 
@@ -42,7 +49,6 @@ public class ChatActivity extends AppCompatActivity {
         messageArrayList.add(new Message(message, true, false, null));
         arrayList.add(message);
         chatAdapter.notifyDataSetChanged();
-
     }
 
     private void processResponse(Response response) {
@@ -56,7 +62,6 @@ public class ChatActivity extends AppCompatActivity {
             case "list":
                 displaySimpleMessage("Woa Imma show you a list");
                 break;
-
         }
     }
 
@@ -82,7 +87,6 @@ public class ChatActivity extends AppCompatActivity {
 
                 } else {
                     displaySimpleMessage("Hmm my head is not working for the moment\nTry after some time while I grab a coffee!");
-
                 }
             }
 
@@ -105,7 +109,6 @@ public class ChatActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
-
         }
 
         listViewChat = findViewById(R.id.listViewChat);
@@ -114,9 +117,9 @@ public class ChatActivity extends AppCompatActivity {
         arrayList = new ArrayList<>();
         messageArrayList = new ArrayList<>();
 
-        chatAdapter = new ChatAdapter(this, arrayList, messageArrayList);
-
+        chatAdapter = new ChatAdapter(this, arrayList, messageArrayList, symptomsList);
         listViewChat.setAdapter(chatAdapter);
+
 
         ImageView button = findViewById(R.id.imageViewSend);
         button.setOnClickListener(v -> {
