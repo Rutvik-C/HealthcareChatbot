@@ -2,12 +2,10 @@ package com.example.healthcarechatbot.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,13 +38,10 @@ public class ChatAdapter extends ArrayAdapter<String> {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View view;
 
-        if (messageArrayList.get(position).getShowButton()) {
-            view = layoutInflater.inflate(R.layout.lv_chat_button, null, true);
-            Button button = view.findViewById(R.id.pickSymptoms);
-            button.setOnClickListener(v -> {
-                Log.i("CLICK", "Button clicked");
+        if (messageArrayList.get(position).getArrayListSuggestions() != null) {
+            view = layoutInflater.inflate(R.layout.lv_chat_list, null, true);
 
-            });
+            // TODO: populate list here
 
 
         } else if (messageArrayList.get(position).getLeft()) {

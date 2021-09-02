@@ -53,10 +53,6 @@ public class ChatActivity extends AppCompatActivity {
                 displaySimpleMessage(response.getMessage());
                 break;
 
-            case "pick_symptom":
-                displaySimpleMessage("Woa Imma show you a button");
-                break;
-
             case "list":
                 displaySimpleMessage("Woa Imma show you a list");
                 break;
