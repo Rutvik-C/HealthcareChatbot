@@ -1,26 +1,30 @@
-from flask import Flask, request, jsonify
-import tensorflow as tf
-from tensorflow import keras
-import nltk
-from nltk.stem import WordNetLemmatizer
-import sklearn
+import json
 import pickle
+import random
+from collections import Counter
+from itertools import combinations
+import nltk
 import numpy as np
 import pandas as pd
-import json
-import random
 import requests
 from bs4 import BeautifulSoup
+from flask import Flask, request, jsonify
 from nltk.corpus import wordnet, stopwords
+from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
-from itertools import combinations
-from collections import Counter
+from nltk.tokenize import word_tokenize
+from tensorflow import keras
+from googlesearch import search
+import re
+import string
+from spellchecker import SpellChecker
 
 nltk.download('stopwords')
 nltk.download('wordnet')
 lemmatizer = WordNetLemmatizer()
 stop_words = stopwords.words('english')
 splitter = RegexpTokenizer(r'\w+')
+spell = SpellChecker()
 
 app = Flask(__name__)
 
@@ -36,8 +40,48 @@ df_comb = pd.read_csv("./data/dis_sym_dataset_comb.csv")
 df_norm = pd.read_csv("./data/dis_sym_dataset_norm.csv")
 X = df_norm.iloc[:, 1:]
 dataset_symptoms = list(X.columns)
+dataset_diseases = list(set(df_comb["label_dis"].values))
 
 user_intent = {"previous": [], "symptoms": [], "disease": None}
+
+
+def diseaseDetail(term):
+    diseases = [term]
+    ret = [term]
+    for dis in diseases:
+        # search "disease wikipedia" on google
+        query = dis + ' wikipedia'
+
+        for sr in search(query, tld="co.in", num=10, stop=10, pause=2):
+            # open wikipedia link
+            match = re.search(r'wikipedia', sr)
+            filled = 0
+            if match:
+                wiki = requests.get(sr, verify=False)
+                soup = BeautifulSoup(wiki.content, 'html.parser')
+                # Fetch HTML code for 'infobox'
+                info_table = soup.find("table", {"class": "infobox"})
+                if info_table is not None:
+                    # Preprocess contents of infobox
+                    for row in info_table.find_all("tr"):
+                        data = row.find("th", {"scope": "row"})
+                        if data is not None:
+                            symptom = str(row.find("td"))
+                            symptom = symptom.replace('.', '')
+                            symptom = symptom.replace(';', ',')
+                            symptom = symptom.replace('<b>', '<b> \n')
+                            symptom = re.sub(r'<a.*?>', '', symptom)  # Remove hyperlink
+                            symptom = re.sub(r'</a>', '', symptom)  # Remove hyperlink
+                            symptom = re.sub(r'<[^<]+?>', ' ', symptom)  # All the tags
+                            symptom = re.sub(r'\[.*\]', '', symptom)  # Remove citation text
+                            symptom = symptom.replace("&gt", ">")
+
+                            if data.get_text() not in ["Pronunciation"]:
+                                ret.append(data.get_text() + ": " + symptom)
+                            filled = 1
+                if filled:
+                    break
+    return ret
 
 
 def process_text(message):
@@ -132,13 +176,57 @@ def preprocess_symptom_text(text):
 
 
 def predict_disease(symptoms):
-    sample_x = [0 for x in range(0, len(dataset_symptoms))]
+    sample_x = [0 for _ in range(0, len(dataset_symptoms))]
 
     for val in symptoms:
         sample_x[dataset_symptoms.index(val)] = 1
 
     pred = linear_reg.predict([sample_x])
     return pred[0].title()
+
+
+def extract_and_fetch_disease_info(text):
+    text = text.lower()
+
+    # deleting punctuations
+    rm_list = string.punctuation
+    table_ = str.maketrans("", "", rm_list)
+    text = text.translate(table_)
+
+    # tokenizing
+    text_tokens = word_tokenize(text)
+    text = [w for w in text_tokens if w not in stopwords.words()]
+
+    misspelled = spell.unknown(text)
+    for w in misspelled:
+        text[text.index(w)] = spell.correction(w)
+
+    diseases = [d.lower() for d in dataset_diseases]
+
+    target = None
+    for disease in diseases:
+        for word in text:
+            if word == disease:
+                target = disease
+                break
+
+    if target is None:
+        target = user_intent["disease"]
+
+    if target is None:
+        return "I wasn't able to get the disease name.__n__You mind typing it again?"
+
+    info = diseaseDetail(target)
+    if len(info) == 0:
+        return "I was unable to fetch info"
+
+    else:
+        s = ""
+        for i, inf in enumerate(info):
+            s += inf
+            if i != len(info) - 1:
+                s += "__n__"
+        return s
 
 
 @app.route("/chat", methods=['POST'])
@@ -151,8 +239,7 @@ def reply():
         list_type = request.form["list_type"]
         list_data = [x.strip() for x in request.form["list"][1: -1].split(",")]
 
-        print(
-            f"text={text}:{type(text)}, user={user}:{type(user)}, list_type={list_type}:{type(list_type)}, list_data={list_data}:{type(list_data)}")
+        print(f"text={text}:{type(text)}, user={user}:{type(user)}, list_type={list_type}:{type(list_type)}, list_data={list_data}:{type(list_data)}")
 
         data = None
 
@@ -233,13 +320,17 @@ def reply():
                     data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
                 elif idx == 2:  # information
-                    pass
+                    user_intent["previous"].append("__info__")
+                    message = extract_and_fetch_disease_info(text)
+                    data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
                 elif idx == 3:  # negative
                     pass
 
                 elif idx == 4:  # precaution
-                    pass
+                    user_intent["previous"].append("__precaution__")
+                    message = extract_and_fetch_disease_info(text)
+                    data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
                 elif idx == 5:  # query
                     user_intent["previous"].append("__query__")
