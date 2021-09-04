@@ -28,12 +28,12 @@
                 android:id="@+id/text_view_chat_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/solid_background_20"
+                android:background="@drawable/transparent_filled_70_15"
                 android:paddingStart="10dp"
-                android:paddingEnd="10dp"
                 android:paddingTop="7dp"
+                android:paddingEnd="10dp"
                 android:paddingBottom="7dp"
-                android:textColor="@color/white"
+                android:textColor="@android:color/secondary_text_light"
                 android:textSize="18sp" />
 
         </RelativeLayout>

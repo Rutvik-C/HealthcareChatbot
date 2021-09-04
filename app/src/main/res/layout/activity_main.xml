@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
     tools:context=".MainActivity">
 
     <TextView
@@ -13,7 +14,7 @@
         android:layout_marginTop="20dp"
         android:fontFamily="@font/aclonica"
         android:text="@string/app_name"
-        android:textColor="@color/blue_dark"
+        android:textColor="@color/white"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -29,7 +30,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:srcCompat="@drawable/doctor" />
+        app:srcCompat="@drawable/robotic" />
 
     <LinearLayout
         android:id="@+id/loginPage"
@@ -37,8 +38,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:background="@drawable/transparent_filled_20_20"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +53,7 @@
             android:layout_marginTop="5dp"
             android:fontFamily="@font/product_sans_bold"
             android:text="@string/login"
-            android:textColor="@color/blue_dark"
+            android:textColor="@color/white"
             android:textSize="25sp" />
 
         <EditText
@@ -67,7 +69,7 @@
             android:inputType="textEmailAddress"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:textColor="#000000"
+            android:textColor="@android:color/secondary_text_light"
             android:textColorHint="@android:color/secondary_text_light"
             android:textSize="18sp" />
 
@@ -84,7 +86,7 @@
             android:inputType="textPassword"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:textColor="#000000"
+            android:textColor="@android:color/secondary_text_light"
             android:textColorHint="@android:color/secondary_text_light"
             android:textSize="18sp" />
 
@@ -95,11 +97,11 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/gradient_background"
-            android:fontFamily="@font/product_sans_regular"
+            android:background="@drawable/transparent_filled_70_15"
+            android:fontFamily="@font/product_sans_bold"
             android:gravity="center"
             android:text="@string/login"
-            android:textColor="@color/white"
+            android:textColor="@android:color/secondary_text_light"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -107,6 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -115,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/product_sans_regular"
                 android:text="@string/no_account"
-                android:textColor="@color/black"
+                android:textColor="@android:color/secondary_text_light"
                 android:textSize="16sp" />
 
             <TextView
@@ -125,7 +128,7 @@
                 android:layout_marginStart="5dp"
                 android:fontFamily="@font/product_sans_bold"
                 android:text="@string/register_here"
-                android:textColor="@color/black"
+                android:textColor="@android:color/secondary_text_light"
                 android:textSize="16sp" />
 
         </LinearLayout>
@@ -139,7 +142,8 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:orientation="vertical"
-        android:visibility="invisible"
+        android:visibility="visible"
+        android:background="@drawable/transparent_filled_20_20"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -152,7 +156,7 @@
             android:layout_marginTop="5dp"
             android:fontFamily="@font/product_sans_bold"
             android:text="@string/register"
-            android:textColor="@color/blue_dark"
+            android:textColor="@color/white"
             android:textSize="25sp" />
 
         <EditText
@@ -168,7 +172,7 @@
             android:inputType="textEmailAddress"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:textColor="#000000"
+            android:textColor="@android:color/secondary_text_light"
             android:textColorHint="@android:color/secondary_text_light"
             android:textSize="18sp" />
 
@@ -185,7 +189,7 @@
             android:inputType="textPassword"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:textColor="#000000"
+            android:textColor="@android:color/secondary_text_light"
             android:textColorHint="@android:color/secondary_text_light"
             android:textSize="18sp" />
 
@@ -202,7 +206,7 @@
             android:inputType="textPassword"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:textColor="#000000"
+            android:textColor="@android:color/secondary_text_light"
             android:textColorHint="@android:color/secondary_text_light"
             android:textSize="18sp" />
 
@@ -213,11 +217,11 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/gradient_background"
-            android:fontFamily="@font/product_sans_regular"
+            android:background="@drawable/transparent_filled_70_15"
+            android:fontFamily="@font/product_sans_bold"
             android:gravity="center"
             android:text="@string/register"
-            android:textColor="@color/white"
+            android:textColor="@android:color/secondary_text_light"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -225,6 +229,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -233,7 +238,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/product_sans_regular"
                 android:text="@string/already_a_user"
-                android:textColor="@color/black"
+                android:textColor="@android:color/secondary_text_light"
                 android:textSize="16sp" />
 
             <TextView
@@ -243,7 +248,7 @@
                 android:layout_marginStart="5dp"
                 android:fontFamily="@font/product_sans_bold"
                 android:text="@string/login_here"
-                android:textColor="@color/black"
+                android:textColor="@android:color/secondary_text_light"
                 android:textSize="16sp" />
 
         </LinearLayout>
@@ -256,7 +261,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:indeterminateTint="@color/blue_dark"
+        android:indeterminateTint="@color/white"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

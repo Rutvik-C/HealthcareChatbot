@@ -18,6 +18,9 @@ from googlesearch import search
 import re
 import string
 from spellchecker import SpellChecker
+import warnings
+
+warnings.simplefilter("ignore")
 
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -47,7 +50,7 @@ user_intent = {"previous": [], "symptoms": [], "disease": None}
 
 def diseaseDetail(term):
     diseases = [term]
-    ret = [term]
+    ret = ["Some facts and information about " + term]
     for dis in diseases:
         # search "disease wikipedia" on google
         query = dis + ' wikipedia'
@@ -237,20 +240,20 @@ def reply():
         text = request.form["text"]
         user = request.form["user"]
         list_type = request.form["list_type"]
-        list_data = [x.strip() for x in request.form["list"][1: -1].split(",")]
+        list_data = [x.strip() for x in request.form["list"][1: -1].split(",") if x != ""]
 
-        print(f"text={text}:{type(text)}, user={user}:{type(user)}, list_type={list_type}:{type(list_type)}, list_data={list_data}:{type(list_data)}")
+        print(f"[+] text={text}, user={user}, list_type={list_type}, list_data={list_data}")
 
         data = None
 
         # Checking previous intent dependency
         if len(user_intent["previous"]) != 0 and user_intent["previous"][-1] == "__query__":
-            print(f"==Select Symptoms=={user_intent['previous']}")
+            print(f"[+] extracting symptoms from user text")
             symptoms = preprocess_symptom_text(text)
 
             if len(symptoms) == 0:
                 data = {
-                    "message": "Umm... None of the symptoms matched with the symptoms you've given.\nTry in a different way",
+                    "message": "Umm... None of the symptoms matched with the symptoms you've given.__n__Try in a different way",
                     "type": "simple", "list": None, "list_content": None}
 
             else:
@@ -259,25 +262,32 @@ def reply():
 
         # Fetching list of symptoms
         elif list_type == "symptom_list" and len(user_intent["previous"]) != 0 and user_intent["previous"][-1] == "__symptoms__":
-            print(f"==Get co occurring=={user_intent['previous']}")
+            print(f"[+] reading user selected symptoms")
 
-            user_intent["symptoms"] = list_data
+            if len(list_data) == 0:
+                user_intent["previous"].append("__query__")
+                data = {"message": "Well try telling the symptoms in bit different way__n__Again in comma separated form :)", "type": "simple", "list": None, "list_content": None}
 
-            co_occurring = get_co_occurring_symptoms(list_data)
+            else:
+                user_intent["symptoms"] = list_data
 
-            user_intent["previous"].append("__co_occur__")
-            data = {"message": "Okay__n__Do you have any of below symptom as well?", "type": "list", "list": co_occurring, "list_content": "additional"}
+                co_occurring = get_co_occurring_symptoms(list_data)
+
+                user_intent["previous"].append("__co_occur__")
+                data = {"message": "Okay__n__Do you have any of below symptom as well?", "type": "list", "list": co_occurring, "list_content": "additional"}
 
         # Check if user selects any co occurring
         elif list_type == "add_symptom_list" and len(user_intent["previous"]) != 0 and user_intent["previous"][-1] == "__co_occur__":
+            print(f"[+] reading user selected co-occurring symptoms and predicting disease")
+
             user_intent["symptoms"].extend(list_data)
 
             # Predict
             disease = predict_disease(user_intent["symptoms"])
 
             syms = ""
-            for i, string in enumerate(user_intent["symptoms"]):
-                syms += string
+            for i, sym in enumerate(user_intent["symptoms"]):
+                syms += sym
                 if i == len(user_intent["symptoms"]) - 2:
                     syms += ", and "
                 elif i != len(user_intent["symptoms"]) - 1:
@@ -295,44 +305,51 @@ def reply():
 
         # Predict intent
         else:
-            print(f"==Intents==")
+            print(f"[+] intent classification")
 
             vector = process_text(text)
             res = intent_classifier.predict(vector)
             idx = np.argmax(res)
 
-            print(f"idx={idx} and result={res}, {res[0][idx]}")
-
             if res[0][idx] < 0.8:  # Not sure
+                print(f"--- low confidence")
+
                 message = responses["below_threshold"][random.randint(0, len(responses["below_threshold"]) - 1)]
                 data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
             else:
                 if idx == 0:  # affirmative
-                    pass
+                    print(f"--- affirmative")
 
                 elif idx == 1:  # greeting
+                    print(f"--- greeting")
+
                     user_intent["previous"].append("__greeting__")
                     message = responses["greeting"][random.randint(0, len(responses["greeting"]) - 1)]
                     message = message.replace("__u__", user.split("@")[0])
 
-                    print(f"greeting {message}")
                     data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
                 elif idx == 2:  # information
+                    print(f"--- information")
+
                     user_intent["previous"].append("__info__")
                     message = extract_and_fetch_disease_info(text)
                     data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
                 elif idx == 3:  # negative
-                    pass
+                    print(f"--- negative")
 
                 elif idx == 4:  # precaution
+                    print(f"--- low confidence")
+
                     user_intent["previous"].append("__precaution__")
                     message = extract_and_fetch_disease_info(text)
                     data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
                 elif idx == 5:  # query
+                    print(f"--- query")
+
                     user_intent["previous"].append("__query__")
                     message = responses["tell_symptoms"][random.randint(0, len(responses["tell_symptoms"]) - 1)]
                     message += "__n__Type the symptoms comma separated..."
@@ -344,7 +361,7 @@ def reply():
         return resp
 
     except Exception as e:
-        resp = jsonify({"Error": e})
+        resp = jsonify({"[-] error": e})
         resp.status_code = 400
         return resp
 

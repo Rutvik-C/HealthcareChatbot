@@ -11,4 +11,8 @@
     <color name="blue_dark">#0966a7</color>
     <color name="blue_black">#363795</color>
     <color name="blue_deep_light">#9ddcf9</color>
+    <color name="pink">#e97e9e</color>
+    <color name="green_blue">#4cc4d3</color>
+    <color name="white_80">#80FFFFFF</color>
+    <color name="grey">#95738089</color>
 </resources>

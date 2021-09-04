@@ -34,6 +34,11 @@ public class ChatAdapter extends ArrayAdapter<String> {
 
     }
 
+    public float convertDpToPx(Context context, float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
+
+    }
+
     @SuppressLint("InflateParams")
     @NonNull
     @Override
@@ -45,13 +50,16 @@ public class ChatAdapter extends ArrayAdapter<String> {
             view = layoutInflater.inflate(R.layout.lv_chat_list, null, true);
 
             ArrayList<String> suggestions = messageArrayList.get(position).getArrayListSuggestions();
+            if (!suggestions.contains("None")) {
+                suggestions.add("None");
+            }
             SuggestionsAdapter adapter = new SuggestionsAdapter(context, suggestions);
 
             ListView listView = view.findViewById(R.id.symptomsListView);
             listView.setAdapter(adapter);
 
             RelativeLayout relativeLayout = view.findViewById(R.id.parentRelativeLayout);
-            RelativeLayout.LayoutParams layoutDescription = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, suggestions.size() * 165);
+            RelativeLayout.LayoutParams layoutDescription = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, (int) convertDpToPx(context, suggestions.size() * 47));
             relativeLayout.setLayoutParams(layoutDescription);
 
             listView.setOnItemClickListener((parent1, view1, i, id) -> {
@@ -60,8 +68,13 @@ public class ChatAdapter extends ArrayAdapter<String> {
                     ChatActivity.symptomsSelected.remove(suggestions.get(i));
 
                 } else {
-                    ChatActivity.symptomsSelected.add(suggestions.get(i));
+                    if (suggestions.get(i).equals("None")) {
+                        ChatActivity.symptomsSelected.clear();
 
+                    } else {
+                        ChatActivity.symptomsSelected.add(suggestions.get(i));
+
+                    }
                 }
 
                 StringBuilder s = new StringBuilder();
