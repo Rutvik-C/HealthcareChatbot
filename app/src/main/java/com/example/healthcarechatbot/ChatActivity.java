@@ -37,7 +37,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private ListView listViewChat;
     private ChatAdapter chatAdapter;
     @SuppressLint("StaticFieldLeak")
     public static TextView textViewMessage;
@@ -63,7 +62,6 @@ public class ChatActivity extends AppCompatActivity {
         arrayList.add(message);
         chatAdapter.notifyDataSetChanged();
 
-        Log.i("VAL", ""+ arrayList.size());
         if (arrayList.size() != 0) {
             linearLayout.setVisibility(View.INVISIBLE);
 
@@ -135,7 +133,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Response> call, Throwable t) {
                 displaySimpleMessage("Oh no! we have an error: " + t.getMessage(), true);
-                saveMessageInDatabase("Oh no! we have an error", true);
+                saveMessageInDatabase("Oh no! we have an error" + t.getMessage(), true);
 
             }
         });
@@ -224,7 +222,7 @@ public class ChatActivity extends AppCompatActivity {
 
         linearLayout = findViewById(R.id.linearLayoutInitial);
 
-        listViewChat = findViewById(R.id.listViewChat);
+        ListView listViewChat = findViewById(R.id.listViewChat);
         textViewMessage = findViewById(R.id.textViewMessage);
 
         arrayList = new ArrayList<>();
