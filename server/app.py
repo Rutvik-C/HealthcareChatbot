@@ -300,6 +300,7 @@ def reply():
             message = responses["disease_predicted"][random.randint(0, len(responses["disease_predicted"]) - 1)]
             message = message.replace("__p__", disease)
             message += "__n__Based on your symptoms " + syms
+            message += "__n__Should I search for nearby hospitals?"
 
             data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
@@ -321,6 +322,10 @@ def reply():
                 if idx == 0:  # affirmative
                     print(f"--- affirmative")
 
+                    if len(user_intent["previous"]) != 0 and user_intent["previous"][-1] == "__pred__":
+                        message = responses["show_map"][random.randint(0, len(responses["show_map"]) - 1)]
+                        data = {"message": message, "type": "map", "list": None, "list_content": None}
+
                 elif idx == 1:  # greeting
                     print(f"--- greeting")
 
@@ -337,17 +342,21 @@ def reply():
                     message = extract_and_fetch_disease_info(text)
                     data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
-                elif idx == 3:  # negative
+                elif idx == 3:  # nearby
+                    message = responses["show_map"][random.randint(0, len(responses["show_map"]) - 1)]
+                    data = {"message": message, "type": "map", "list": None, "list_content": None}
+
+                elif idx == 4:  # negative
                     print(f"--- negative")
 
-                elif idx == 4:  # precaution
-                    print(f"--- low confidence")
+                elif idx == 5:  # precaution
+                    print(f"--- precaution")
 
                     user_intent["previous"].append("__precaution__")
                     message = extract_and_fetch_disease_info(text)
                     data = {"message": message, "type": "simple", "list": None, "list_content": None}
 
-                elif idx == 5:  # query
+                elif idx == 6:  # query
                     print(f"--- query")
 
                     user_intent["previous"].append("__query__")

@@ -16,4 +16,6 @@
     <string name="logout">logout</string>
     <string name="info_account">You are signed in as</string>
     <string name="instruction">Go ahead, say Hi!</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="nearby_hospitals">Nearby hospitals</string>
 </resources>

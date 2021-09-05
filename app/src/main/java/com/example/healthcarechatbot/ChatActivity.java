@@ -1,14 +1,11 @@
 package com.example.healthcarechatbot;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -17,14 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.healthcarechatbot.adapters.ChatAdapter;
 import com.example.healthcarechatbot.classes.Message;
-import com.example.healthcarechatbot.serverconnection.ApiInterface;
 import com.example.healthcarechatbot.classes.Response;
+import com.example.healthcarechatbot.serverconnection.ApiInterface;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -63,14 +60,14 @@ public class ChatActivity extends AppCompatActivity {
         chatAdapter.notifyDataSetChanged();
 
         if (arrayList.size() != 0) {
-            linearLayout.setVisibility(View.INVISIBLE);
+            linearLayout.setVisibility(View.GONE);
 
         }
-
     }
 
     private void saveMessageInDatabase(String message, Boolean isLeft) {
         message = message.replace('"', ' ');
+        message = message.replace('\'', ' ');
 
         if (isLeft) {
             ChatDatabase.execSQL("INSERT INTO chat VALUES ('" + message + "', 1)");
@@ -79,7 +76,6 @@ public class ChatActivity extends AppCompatActivity {
             ChatDatabase.execSQL("INSERT INTO chat VALUES ('" + message + "', 0)");
 
         }
-
     }
 
     private void showListMessage(ArrayList<String> symptoms) {
@@ -107,6 +103,12 @@ public class ChatActivity extends AppCompatActivity {
             listType = response.getList_content();
 
             showListMessage(response.getList());
+
+        }
+
+        if (type.equals("map")) {
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
 
         }
     }
