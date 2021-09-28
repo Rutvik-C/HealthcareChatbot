@@ -3,6 +3,7 @@
 2. The user can chat with the chatbot to get information about disease, diagnose a disease, check symptoms, etc
 3. The user can also request to search for nearby hospitals
 
+### Screenshots
 <p align="center">
   <img alt="SQL" width="200px" src="https://github.com/Rutvik-C/HealthcareChatbot/blob/master/images/Screenshot_20210928-145438_Sushruta.jpg"/>
   <img alt="SQL" width="200px" src="https://github.com/Rutvik-C/HealthcareChatbot/blob/master/images/Screenshot_20210905-190110_Sushruta.jpg"/>    
